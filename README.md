@@ -1,42 +1,65 @@
 # eval_mvp
 
-Minimal coding benchmark using Python's standard library, Harbor, and Docker.
+Small local coding benchmark: Python's standard library + Harbor + Docker.
 
-Requires Python 3, Docker running, and Harbor 0.23.0 (`uv tool install harbor==0.23.0`).
-The runner and grader use only Python's standard library.
+## Run
 
-From this directory, check the bundled task:
-
-```sh
-python3 benchmark.py --agent oracle
-python3 benchmark.py --agent nop
-```
-
-Expected: oracle scores 1.0; nop scores 0.0. Nop exercises the bundled incorrect
-implementation, so it also checks that plausible wrong work is rejected.
-
-Run a coding agent, with your provider credentials set in the environment:
+Requires Python 3.9+, Docker running, and `harbor==0.23.0` on PATH:
 
 ```sh
+uv tool install harbor==0.23.0
+python3 benchmark.py --check
 python3 benchmark.py --model provider/model
 ```
 
-Replace `provider/model` with your actual Harbor/LiteLLM model identifier.
-The default agent is Terminus-2; select another with `--agent`.
+Replace `provider/model` with your actual model identifier and set its provider
+credentials in your environment. Terminus-2 is the fixed agent harness. Task
+containers have no network; model requests run on the host. No model is called
+by `--check`.
 
-One attempt per task, sequential execution, no automatic retries. The bundled
-task has a 120-second agent limit and a 30-second verifier limit. The agent
-environment permits network access; the verifier disables it using Docker
-Compose. Only /app is transferred. Submitted programs run without privileges;
-grading code and rewards are protected from that user.
+## Tasks
 
-Each job saves its configuration, task checksums, trajectories, test output,
-and summary.json under runs/. Score is passes / tasks; infrastructure errors
-produce an incomplete report with score null. Agent timeouts are unsuccessful
-attempts. Logs contain execution metadata and must be treated as private.
+Five scored tasks: CSV aggregation, configuration precedence, SQLite transactions,
+dependency ordering, and a CLI feature. The original sum example and a permissions
+probe are smoke checks, excluded from scoring. Each task contains instructions,
+starting files, a reference solution, and a deliberately incomplete solution.
+The runner assembles these into Harbor's task format using a shared grader.
 
-Add task directories under tasks/ and keep task contents fixed between compared
-runs. This one-task example demonstrates the machinery, not broad coding ability.
+`--check` requires two passing reference runs, a failing unchanged run, and a
+failing incomplete solution per scored task, plus passing smoke checks. A scored
+run requires a matching validation receipt for the source hash and exact images.
+Changing source or rebuilding different images requires another check.
 
-Verified locally with Docker and Harbor: reference solution 1/1; unchanged wrong
-solution 0/1; separate verifier mode in both trials. No model-backed run performed.
+## Protocol
+
+`benchmark.json` fixes the benchmark version, task list, Harbor version, agent,
+limits, and settings. Default evaluation: three attempts per task, sequential,
+no retries. Score = successful attempts / 15. Agent timeouts count as unsuccessful;
+infrastructure failures, missing results, or inconsistent grading make the run
+incomplete with no score. `--deadline 3600` bounds the whole run; labeled task
+containers are cleaned up after interruption or failure.
+
+The agent and verifier are separate containers. Only /app is submitted. Grading
+code stays protected, and submitted programs execute as an unprivileged user with
+CPU, memory, output-size, and execution limits. Tests include reproducible generated
+inputs and regression cases. Reference solutions never enter the agent image.
+
+Images are built from a digest-pinned Python image. The runner records the exact
+built image IDs, source hash, settings, individual outcomes, agent versions,
+trajectories, and test logs in `runs/<id>/`. `runs/` and credentials are gitignored.
+Source changes during execution invalidate the measurement. Freeze task content
+for a release; changes require a new benchmark version and fresh measurements.
+
+## Verify the runner
+
+```sh
+python3 -m unittest discover -s tests -v
+```
+
+Verified locally: nine runner tests and all 22 container pre-check trials passed
+their expected outcomes. No model-backed benchmark score has been measured yet.
+
+This small suite measures functional correctness, not code quality or general
+coding ability. Public test code and fixed seeds are not a private holdout.
+Validation does not establish resistance to container escapes. Use versioned
+model identifiers when available; remote provider behavior is outside our control.
