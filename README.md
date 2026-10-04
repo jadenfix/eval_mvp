@@ -56,8 +56,20 @@ for a release; changes require a new benchmark version and fresh measurements.
 python3 -m unittest discover -s tests -v
 ```
 
-Verified locally: nine runner tests and all 22 container pre-check trials passed
-their expected outcomes. No model-backed benchmark score has been measured yet.
+Run the end-to-end tests with Harbor and Docker (takes several minutes):
+
+```sh
+EVAL_MVP_E2E=1 python3 -m unittest discover -s tests -p test_e2e.py -v
+```
+
+These invoke the real CLI in isolated benchmark copies: complete validation,
+protected grading, report and receipt checks, rejection of a broken reference,
+and container cleanup. They make no model calls. Evidence stays in `runs/e2e/`.
+
+Verified locally: nine runner tests and both end-to-end tests passed. The E2E run
+executed 27 real container trials, including all 22 successful-validation trials
+and five trials rejecting a broken reference. No model-backed benchmark score
+has been measured yet.
 
 This small suite measures functional correctness, not code quality or general
 coding ability. Public test code and fixed seeds are not a private holdout.
