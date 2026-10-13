@@ -66,6 +66,11 @@ These invoke the real CLI in isolated benchmark copies: complete validation,
 protected grading, report and receipt checks, rejection of a broken reference,
 and container cleanup. They make no model calls. Evidence stays in `runs/e2e/`.
 
+GitHub Actions separates the fast runner checks from a Docker E2E job. The
+Docker job installs the pinned Harbor version, explicitly enables both E2E
+tests, and retains CLI/grader evidence even on failure. A passing unit job
+alone is not evidence that the container workflow passed.
+
 Verified locally: nine runner tests and both end-to-end tests passed. The E2E run
 executed 27 real container trials, including all 22 successful-validation trials
 and five trials rejecting a broken reference. No model-backed benchmark score
@@ -75,3 +80,4 @@ This small suite measures functional correctness, not code quality or general
 coding ability. Public test code and fixed seeds are not a private holdout.
 Validation does not establish resistance to container escapes. Use versioned
 model identifiers when available; remote provider behavior is outside our control.
+

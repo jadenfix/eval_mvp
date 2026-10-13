@@ -1,0 +1,47 @@
+name: verify-benchmark
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  runner:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      matrix:
+        python: ['3.12', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Runner unit tests (Docker tests intentionally skipped)
+        run: python -m unittest discover -s tests -v
+  docker-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      EVAL_MVP_E2E: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install the protocol-pinned Harbor runner
+        run: python -m pip install 'harbor==0.23.0'
+      - name: Check runtime prerequisites
+        run: |
+          harbor --version
+          docker info
+      - name: Validate reference, negative controls, grading isolation and cleanup
+        run: python -m unittest discover -s tests -p test_e2e.py -v
+      - name: Preserve CLI and grader evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-validation-${{ github.run_id }}
+          path: runs/e2e/
+          if-no-files-found: warn
+          retention-days: 7
