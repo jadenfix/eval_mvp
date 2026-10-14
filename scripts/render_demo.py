@@ -197,10 +197,11 @@ def main() -> int:
             image.save(path, optimize=True)
             frames.append(image)
         frames[-1].save(poster, optimize=True)
+        # The GIF is a six-card accessible summary; the MP4 retains full motion.
         gif_frames = [frame.resize((960, 540), Image.Resampling.LANCZOS)
-                      for frame in frames[::2]]
+                      for frame in frames[::2 * FPS]]
         gif_frames[0].save(gif, save_all=True, append_images=gif_frames[1:],
-                           duration=200, loop=0, optimize=True, disposal=2)
+                           duration=2000, loop=0, optimize=True)
         subprocess.run([
             "ffmpeg", "-v", "error", "-y", "-framerate", str(FPS),
             "-i", str(Path(directory) / "frame-%04d.png"), "-c:v", "libx264",
@@ -217,7 +218,7 @@ def main() -> int:
             str(path.relative_to(ROOT)): {"sha256": file_hash(path)}
             for path in (gif, mp4, poster)
         },
-        "render": {"seconds": SECONDS, "mp4_fps": FPS, "gif_fps": FPS // 2,
+        "render": {"seconds": SECONDS, "mp4_fps": FPS, "gif_fps": 0.5,
                    "mp4_size": [WIDTH, HEIGHT], "gif_size": [960, 540]},
         "scope": receipt["scope"],
     }

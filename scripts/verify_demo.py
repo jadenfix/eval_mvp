@@ -79,7 +79,7 @@ def main() -> int:
         raise SystemExit("unexpected MP4 frame count")
     if (int(gif_stream["width"]), int(gif_stream["height"])) != (960, 540):
         raise SystemExit("unexpected GIF dimensions")
-    if int(gif_stream.get("nb_read_frames", 0)) != 60:
+    if int(gif_stream.get("nb_read_frames", 0)) != 6:
         raise SystemExit("unexpected GIF frame count")
     if (int(poster_stream["width"]), int(poster_stream["height"])) != (1280, 720):
         raise SystemExit("unexpected poster dimensions")
