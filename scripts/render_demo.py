@@ -200,7 +200,7 @@ def main() -> int:
         gif_frames = [frame.resize((960, 540), Image.Resampling.LANCZOS)
                       for frame in frames[::2]]
         gif_frames[0].save(gif, save_all=True, append_images=gif_frames[1:],
-                           duration=200, loop=0, optimize=False)
+                           duration=200, loop=0, optimize=True, disposal=2)
         subprocess.run([
             "ffmpeg", "-v", "error", "-y", "-framerate", str(FPS),
             "-i", str(Path(directory) / "frame-%04d.png"), "-c:v", "libx264",
