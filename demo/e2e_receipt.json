@@ -1,0 +1,54 @@
+{
+  "hosted_evidence": {
+    "archive_sha256": "44fb241a0df97471dda35111558308f6ea0aad2e20bc0d8884f4f37b6dd35b4e",
+    "artifact_created_at": "2026-10-13T01:02:03Z",
+    "artifact_id": 11782845031,
+    "evidence_file_sha256": {
+      "6d9d83f1cc6846f7bca542abed77bffc/cli.log": "379d0f649337072fcdb0508de97e4d4a641f4305c7d8cfc51bc2a4071cfdafd9",
+      "6d9d83f1cc6846f7bca542abed77bffc/runs/87d7ea97b67e428f95bb6397e183f7b1/summary.json": "e1b6412378258952eae5458a248dca9a885eb031d0ec8e08335b49bd5d60cec4",
+      "731c3a04941b4b3697e560d4c7866ee9/cli.log": "97c1142b6f0da78dde9a3b6009051211787196760bc0950ebdf9b61c5049cfb2",
+      "731c3a04941b4b3697e560d4c7866ee9/runs/68baa70e699f4ef292dc7b3732ea3b6b/summary.json": "23e154a3eb7cbf9ce67988cf3a0f056ccd472674c9cb22144cd161fcd9011c0d"
+    },
+    "workflow_run": 38329107045,
+    "workflow_url": "https://github.com/jadenfix/eval_mvp/actions/runs/38329107045"
+  },
+  "repository": "jadenfix/eval_mvp",
+  "schema_version": 1,
+  "scope": {
+    "demonstrated": "provider-free local benchmark validation with Harbor and Docker",
+    "not_demonstrated": [
+      "model quality",
+      "benchmark score",
+      "private holdout quality",
+      "container escape resistance",
+      "performance",
+      "production deployment"
+    ]
+  },
+  "source": {
+    "benchmark_hash": "4f2dcd5c41b2e44170c008e454672070713280439dfa234eaed36d2bd1fd7912",
+    "commit": "d36c9aa6607dc1aeb3516f009c5317fc4772b4f0",
+    "tree": "21c98797120a2d712e9222261ef39f196514c837"
+  },
+  "validation": {
+    "benchmark_score_measured": false,
+    "broken_reference_control": {
+      "complete": false,
+      "expected_fail": 1,
+      "pass_before_rejection": 4,
+      "real_trials": 5,
+      "reason": "pre-check failed: oracle",
+      "score": null
+    },
+    "complete_reference_and_negative_controls": {
+      "complete": true,
+      "expected_fail": 10,
+      "pass": 12,
+      "real_trials": 22,
+      "score": null
+    },
+    "model_called": false,
+    "separate_verifier": true,
+    "total_real_harbor_docker_trials": 27
+  }
+}

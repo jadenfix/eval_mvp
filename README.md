@@ -2,6 +2,16 @@
 
 Small local coding benchmark: Python's standard library + Harbor + Docker.
 
+![Provider-free Harbor and Docker validation receipt](demo/eval_mvp.gif)
+
+The walkthrough above is a source/output visualization of the actual retained
+current-main E2E evidence from [workflow run 38329107045](https://github.com/jadenfix/eval_mvp/actions/runs/38329107045),
+not a simulated model result. It shows 27 real Harbor/Docker validation trials:
+22 reference/negative-control trials and five trials proving that a deliberately
+broken reference fails closed. No model was called and no benchmark score was
+measured. See [the MP4](demo/eval_mvp.mp4),
+[receipt](demo/e2e_receipt.json), and [capture manifest](demo/capture.json).
+
 ## Run
 
 Requires Python 3.9+, Docker running, and `harbor==0.23.0` on PATH:
@@ -70,6 +80,16 @@ GitHub Actions separates the fast runner checks from a Docker E2E job. The
 Docker job installs the pinned Harbor version, explicitly enables both E2E
 tests, and retains CLI/grader evidence even on failure. A passing unit job
 alone is not evidence that the container workflow passed.
+
+Verify the checked-in receipt and demo media with:
+
+```sh
+python3 scripts/verify_demo.py
+```
+
+The verifier pins the captured source commit/tree and every source blob, checks
+the receipt and artifact hashes, fully decodes the GIF/MP4/poster, validates
+dimensions/frame counts/durations, and requires a clean checkout.
 
 Verified locally: nine runner tests and both end-to-end tests passed. The E2E run
 executed 27 real container trials, including all 22 successful-validation trials

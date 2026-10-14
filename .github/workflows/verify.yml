@@ -45,3 +45,17 @@ jobs:
           path: runs/e2e/
           if-no-files-found: warn
           retention-days: 7
+  demo-verification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install media decoder
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Verify source, receipt, media and clean checkout
+        run: python scripts/verify_demo.py
